@@ -10,6 +10,36 @@ function buildSection(buttonText, optionsId, inputs){
     document.getElementById("Options-Container").appendChild(container);
 }
 
+async function buildSectionFromFile(sectionHtmlFilePath, sectionName, sectionId){
+    var container = document.createElement("div");
+
+    var sectionHeadder = buildSectionHeadder(sectionName);
+    container.appendChild(sectionHeadder);
+    sectionHeadder.addEventListener("click", function(){
+        setActiveControl(sectionId);
+    });
+    var sectionContent;
+    await getSectionFromFile(sectionHtmlFilePath).then(function(section){
+        sectionContent = section;
+    });
+    sectionContent.id = sectionId;
+    sectionContent.classList.add("Hidden");
+    sectionContent.classList.add("Option-Area");
+    container.appendChild(sectionContent);
+    document.getElementById("Options-Container").appendChild(container);
+}
+
+function buildOptionsContainer(id, inputs){
+    optionContainer = document.createElement("div");
+    optionContainer.id = id;
+    optionContainer.classList.add("Hidden");
+    optionContainer.classList.add("Option-Area");
+    inputs.forEach(function(element){
+        optionContainer.appendChild(element);
+    });
+    return optionContainer;
+};
+
 function setActiveControl(controlDiv){
     var classes = document.getElementById(controlDiv).classList;
     var hidden = false;
@@ -34,16 +64,15 @@ function buildOptionButton(text){
     return container;
 };
 
-function buildOptionsContainer(id, inputs){
-    optionContainer = document.createElement("div");
-    optionContainer.id = id;
-    optionContainer.classList.add("Hidden");
-    optionContainer.classList.add("Option-Area");
-    inputs.forEach(function(element){
-        optionContainer.appendChild(element);
-    });
-    return optionContainer;
+function buildSectionHeadder(text){
+    container = document.createElement("div");
+    container.classList.add("section-headder");
+    label = document.createElement("p").appendChild(document.createTextNode("+ " + text));
+    container.appendChild(label);
+    return container;
 };
+
+
 
 function buildCheckboxInput(text, id, value, checked){
     thisOptionContainer = document.createElement("div");
@@ -98,11 +127,17 @@ function buildParagraph(text, id){
     return thisOptionContainer;
 }
 
-function buildfromFile(html, id){
+function buildParagraphFromFile(textFilePath, id){
+    /*
     thisOptionContainer = document.createElement("div");
     thisOptionContainer.classList.add( "paragraphContainer" );
-    thisOptionContainer.innerHTML = html;
+    var paragraph = document.createElement("p").appendChild(document.createTextNode(text));
+    paragraph.id = id;
+    thisOptionContainer.appendChild(paragraph);
     return thisOptionContainer;
+    */
+
+    return getTextFromFile(textFilePath, "paragraphContainer");
 }
 
 function buildCodeExample(text, id){
@@ -122,7 +157,6 @@ async function buildCodeExampleFromFile(filePath, id){
         xhr.onreadystatechange= function() {
             if (this.readyState!==4) return;
             if (this.status!==200) return;
-            console.log("now we're cooking");
             html = this.responseText;
             thisOptionContainer = document.createElement("div");
             thisOptionContainer.classList.add( "codeExampleContainer" );
@@ -132,3 +166,39 @@ async function buildCodeExampleFromFile(filePath, id){
         xhr.send();
     })
 ;}
+
+function getTextFromFile(filePath, className){
+    return new Promise(function(resolve, reject) {
+        var thisOptionContainer;
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', filePath, true);
+        xhr.onreadystatechange= function() {
+            if (this.readyState!==4) return;
+            if (this.status!==200) return;
+            html = this.responseText;
+            thisOptionContainer = document.createElement("div");
+            thisOptionContainer.classList.add( className );
+            thisOptionContainer.innerHTML = html;
+            resolve(thisOptionContainer);
+        };
+        xhr.send();
+    })
+}
+
+function getSectionFromFile(filePath){
+    return new Promise(function(resolve, reject) {
+        var section;
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', filePath, true);
+        xhr.onreadystatechange= function() {
+            if (this.readyState!==4) return;
+            if (this.status!==200) return;
+            html = this.responseText;
+            section = document.createElement("div");
+            section.classList.add( "section" );
+            section.innerHTML = html;
+            resolve(section);
+        };
+        xhr.send();
+    })
+}

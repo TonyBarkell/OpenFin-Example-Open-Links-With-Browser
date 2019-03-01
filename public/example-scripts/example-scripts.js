@@ -1,3 +1,7 @@
+function example1(){
+    console.log("I've been clicked");
+}
+
 function openUrlWithBrowser(){
     fin.System.openUrlWithBrowser('http://www.openfin.co')
     .then(() => console.log('Opened URL')).catch(err => console.log(err));

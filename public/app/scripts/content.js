@@ -1,6 +1,6 @@
 // Section 1
-const section1ParagraphText       = "This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. This is Paragraph text. "
-var section1Paragraph           = buildParagraph(section1ParagraphText, "section1ParagraphText");
+var section1Paragraph;
+var section1Code;
 var button1                     = buildButton("Button 1", "This is button 1, and her's some space for some text", "button1Id");
 
 
@@ -10,12 +10,15 @@ var checkbox1                   = buildCheckboxInput("Check Box Text:", "checkbo
 //var layoutServiceInput          = buildCheckboxInput("Layout Service:", "servicesLayouts", "servicesLayouts", false);
 //var opacityInput                = buildNumberInput("Opacity:", "opacity", 0.0, 1.0, 0.1, 1.0);
 
-function buildContent(){
+async function buildContent(){
 
-    buildCodeExampleFromFile("./app/scripts/text.html").then(function(element){
-        console.log("elm " + element);
-        buildSection("Section 1", "Section1", [section1Paragraph, button1, element]);
+    await buildCodeExampleFromFile("./app/text/section1Code.html", "section1Code").then(function(element){
+        section1Code = element;
+    });
+    await buildParagraphFromFile("./app/text/section1ParagraphText.html", "section1Paragraph").then(function(element){
+        section1Paragraph = element;
     });
     //buildSection("Section 1", "Section1", [section1Paragraph, button1, section1CodeExample]);
-    buildSection("Section 2", "Section2", [checkbox1]);
+    buildSection("Section 1", "Section1", [section1Paragraph, button1, section1Code]);
+    buildSectionFromFile("./app/sections/section2.html", "Section 2", "Section2");
 }
